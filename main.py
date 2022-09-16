@@ -1,4 +1,6 @@
 import uuid
+from datetime import date
+
 
 def main():
     months_count = 12
@@ -23,51 +25,48 @@ def main():
     write_end(calendar)
     calendar.close()
 
+
 def write_start(calendar_file):
-    calendar_file.write("BEGIN:VCALENDAR\n")
-    calendar_file.write("VERSION:2.0\n")
-    calendar_file.write("PRODID:-//K Desktop Environment//NONSGML v1.0//EN\n")
-    
+    calendar_file.write("BEGIN:VCALENDAR\r\n")
+    calendar_file.write("VERSION:2.0\r\n")
+    calendar_file.write("PRODID:-//K Desktop Environment//NONSGML v1.0//EN\r\n")
+
+
 def write_end(calendar_file):
     calendar_file.write("END:VCALENDAR")
+
 
 def create_uid():
     return str(uuid.uuid4())
 
+
 def create_event(calendar_file, name, year, month, day):
-    calendar_file.write("BEGIN:VEVENT\n")
-    calendar_file.write(f"UID:{create_uid()}\n")
-    calendar_file.write(f"DTSTAMP:20200101T000000Z\n")
+    calendar_file.write("BEGIN:VEVENT\r\n")
+    calendar_file.write(f"UID:{create_uid()}\r\n")
+
+    calendar_file.write(f"DTSTAMP:{get_todays_date()}T000000Z\r\n")
     calendar_file.write(f"SUMMARY:{name}")
-    calendar_file.write("STATUS:CONFIRMED\n")
-    calendar_file.write(f"RRULE:FREQ=YEARLY;BYMONTH={month}\n")
+    calendar_file.write("STATUS:CONFIRMED\r\n")
+    calendar_file.write(f"RRULE:FREQ=YEARLY;BYMONTH={month}\r\n")
 
     calendar_file.write(f"DTSTART;VALUE=DATE:{year}")
     right_entry_format(calendar_file, month)
     right_entry_format(calendar_file, day)
-    calendar_file.write("\n")
+    calendar_file.write("\r\n")
 
     calendar_file.write(f"DTEND;VALUE=DATE:{year}")
     right_entry_format(calendar_file, month)
     right_entry_format(calendar_file, day)
-    calendar_file.write("\n")
-
-    add_notification(calendar_file)
+    calendar_file.write("\r\n")
     
-    calendar_file.write("END:VEVENT\n")
+    calendar_file.write("END:VEVENT\r\n")
+
 
 def right_entry_format(calendar_file, data):
     if data < 10:
         calendar_file.write(f"0{data}")
     else:
         calendar_file.write(f"{data}")
-
-def add_notification(calendar_file):
-    calendar_file.write("BEGIN:VALARM\n")
-    calendar_file.write("ACTION:DISPLAY\n")
-    calendar_file.write("DESCRIPTION:This is an event reminder\n")
-    calendar_file.write("TRIGGER:P0DT9H30M0S\n")
-    calendar_file.write("END:VALARM\n")
 
 
 def set_days_in_month(month):
@@ -77,6 +76,13 @@ def set_days_in_month(month):
        return 31
     else:
         return 30
+
+
+def get_todays_date():
+    today = date.today()
+    formated_str = today.strftime("%Y%m%d")
+    return formated_str
+    
 
 if __name__ == "__main__":
     main()
